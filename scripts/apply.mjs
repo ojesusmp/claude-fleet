@@ -65,6 +65,38 @@ function applySettings() {
   log('wrote', SETTINGS);
 }
 
+// ---------------------------------------------------------------- plugins (fetch + cache via claude CLI)
+// Writing enabledPlugins to settings.json is not enough — the marketplaces must be added and the
+// plugins installed/cached, or Claude Code reports "Plugin not cached".
+function applyPlugins() {
+  const plugins = manifest.plugins || [];
+  if (!plugins.length) return;
+  if (dryRun) { plugins.forEach((p) => log('DRY-RUN would install plugin', p.id)); return; }
+  try {
+    execSync('claude plugin list', { stdio: 'pipe' });
+  } catch {
+    warn('claude CLI not found — plugins declared in settings but NOT fetched. Install manually: claude plugin install <id> -s user');
+    return;
+  }
+  // Add each marketplace once.
+  const seen = new Set();
+  for (const p of plugins) {
+    const m = p.marketplace;
+    if (!m || seen.has(m.name)) continue;
+    seen.add(m.name);
+    const src = m.source.source === 'git' ? m.source.url : m.source.repo;
+    if (!src) continue;
+    try { sh(`claude plugin marketplace add ${q(src)}`); }
+    catch { warn('marketplace add (may already exist):', m.name); }
+  }
+  // Install enabled plugins (skip disabled like caveman).
+  for (const p of plugins) {
+    if (p.enabled === false) continue;
+    try { sh(`claude plugin install ${q(p.id)} -s user`); log('plugin installed', p.id); }
+    catch (e) { warn('plugin install (may already exist):', p.id, e.message); }
+  }
+}
+
 // ---------------------------------------------------------------- ECC-style skill repos (skills/<name>/)
 function syncRepo(r) {
   const dest = path.join(CACHE, r.name);
@@ -172,6 +204,7 @@ function applyMcp() {
 // ---------------------------------------------------------------- main
 log(`target=${CLAUDE_DIR}${dryRun ? ' (dry-run)' : ''}`);
 applySettings();
+applyPlugins();
 applySkillRepos();
 applyRootSkillRepos();
 applyVendored();
