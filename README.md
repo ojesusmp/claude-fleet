@@ -2,6 +2,8 @@
 
 Portable, token-lean **Claude Code** setup for a mixed fleet — Ubuntu/Debian servers, macOS/Windows laptops. One repo, one command, the same baseline everywhere.
 
+📖 **Full documentation: [`docs/GUIDE.md`](docs/GUIDE.md)** — detailed install per OS, everything included, internals, customization, troubleshooting, uninstall.
+
 It does **not** clone a `~/.claude` directory (that breaks across OSes and leaks machine state). It declaratively rebuilds the setup from a `manifest.json`:
 
 - **Plugins** — enabled via marketplaces (GitHub-sourced, auto-updating).
