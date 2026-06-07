@@ -1,0 +1,2 @@
+# Drop skill folders here (each containing a SKILL.md) to ship them with this repo.
+# They install to ~/.claude/skills/<name>/ on every run and update with the repo.

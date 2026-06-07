@@ -1,0 +1,54 @@
+{
+  "name": "claude-fleet",
+  "description": "Portable, token-lean Claude Code setup for servers + laptops (Linux/macOS/Windows).",
+  "version": "0.1.0",
+  "plugins": [
+    {
+      "id": "oh-my-claudecode@omc",
+      "marketplace": { "name": "omc", "source": { "source": "git", "url": "https://github.com/Yeachan-Heo/oh-my-claudecode.git" } }
+    },
+    {
+      "id": "superpowers@claude-plugins-official",
+      "marketplace": { "name": "claude-plugins-official", "source": { "source": "github", "repo": "anthropics/claude-plugins-official" } }
+    },
+    {
+      "id": "frontend-design@claude-plugins-official",
+      "profiles": ["laptop"],
+      "marketplace": { "name": "claude-plugins-official", "source": { "source": "github", "repo": "anthropics/claude-plugins-official" } }
+    },
+    {
+      "id": "andrej-karpathy-skills@karpathy-skills",
+      "marketplace": { "name": "karpathy-skills", "source": { "source": "github", "repo": "forrestchang/andrej-karpathy-skills" } }
+    },
+    {
+      "id": "line-check@claude-skills",
+      "marketplace": { "name": "claude-skills", "source": { "source": "github", "repo": "ojesusmp/claude-skills" } }
+    },
+    {
+      "id": "caveman@caveman",
+      "enabled": false,
+      "_note": "Disabled by default (3.2k always-on cost). Enable for long sessions: set enabled true and re-run, or /plugin.",
+      "marketplace": { "name": "caveman", "source": { "source": "github", "repo": "JuliusBrussee/caveman" } }
+    }
+  ],
+  "skillRepos": [
+    {
+      "name": "ECC",
+      "url": "https://github.com/affaan-m/ECC.git",
+      "skillsPath": "skills",
+      "sparse": true,
+      "skills": [
+        "gateguard",
+        "security-scan",
+        "context-budget",
+        "python-patterns",
+        "react-patterns",
+        "workspace-surface-audit"
+      ]
+    }
+  ],
+  "mcp": {
+    "claudeFlow": true,
+    "profiles": ["server", "laptop"]
+  }
+}
