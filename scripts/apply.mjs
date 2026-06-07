@@ -106,6 +106,41 @@ function applySkillRepos() {
   }
 }
 
+// ---------------------------------------------------------------- root-skill repos
+// Repos where SKILL.md is at the repo root (one repo == one skill).
+function applyRootSkillRepos() {
+  const repos = manifest.rootSkillRepos || [];
+  if (!repos.length) return;
+  ensureDir(SKILLS_DIR);
+  ensureDir(CACHE);
+  for (const r of repos) {
+    if (!inProfile(r)) continue;
+    if (dryRun) { log('DRY-RUN would install root-skill', r.repo, '->', r.name); continue; }
+    const url = r.url || `https://github.com/${manifest.githubOwner}/${r.repo}.git`;
+    const dest = path.join(CACHE, 'root-' + r.repo);
+    try {
+      if (fs.existsSync(path.join(dest, '.git'))) {
+        sh(`git -C ${q(dest)} fetch --depth 1 origin`);
+        sh(`git -C ${q(dest)} reset --hard FETCH_HEAD`);
+      } else {
+        sh(`git clone --depth 1 ${q(url)} ${q(dest)}`);
+      }
+    } catch (e) {
+      warn('root-skill clone failed:', r.repo, e.message);
+      continue;
+    }
+    if (!fs.existsSync(path.join(dest, 'SKILL.md'))) { warn('no root SKILL.md in', r.repo); continue; }
+    const target = path.join(SKILLS_DIR, r.name);
+    fs.rmSync(target, { recursive: true, force: true });
+    ensureDir(target);
+    for (const e of fs.readdirSync(dest)) {
+      if (e === '.git' || e === '.github') continue;
+      fs.cpSync(path.join(dest, e), path.join(target, e), { recursive: true, force: true });
+    }
+    log('skill <-', `${r.repo} (${r.name})`);
+  }
+}
+
 // ---------------------------------------------------------------- vendored skills
 function applyVendored() {
   const vdir = path.join(REPO, 'skills-vendored');
@@ -144,6 +179,7 @@ function applyMcp() {
 log(`profile=${profile} target=${CLAUDE_DIR}${dryRun ? ' (dry-run)' : ''}`);
 applySettings();
 applySkillRepos();
+applyRootSkillRepos();
 applyVendored();
 applyMcp();
 log('done. Restart Claude Code to load the new configuration.');

@@ -47,6 +47,20 @@
       ]
     }
   ],
+  "githubOwner": "ojesusmp",
+  "_rootSkillRepos_note": "Repos where SKILL.md sits at the repo ROOT (one repo = one skill). Installed to ~/.claude/skills/<name>. 'name' must equal the SKILL.md name: field so /invoke works. Repo label can differ (e.g. SalesCouncil -> sales-council).",
+  "rootSkillRepos": [
+    { "repo": "TrueCouncilOf12", "name": "TrueCouncilOf12", "profiles": ["laptop"] },
+    { "repo": "DecisionCouncil", "name": "decision-council", "profiles": ["laptop"] },
+    { "repo": "OperationsCouncil", "name": "operations-council", "profiles": ["laptop"] },
+    { "repo": "TechCouncil", "name": "techcouncil", "profiles": ["laptop"] },
+    { "repo": "Customer_Experience_Council", "name": "customer-experience-council", "profiles": ["laptop"] },
+    { "repo": "SalesCouncil", "name": "sales-council", "profiles": ["laptop"] },
+    { "repo": "MarketingCouncil", "name": "marketing-council", "profiles": ["laptop"] },
+    { "repo": "TrueExplica", "name": "explica", "profiles": ["laptop"] },
+    { "repo": "Epistemic-Honesty", "name": "epistemic-honesty" },
+    { "repo": "TrueTrio", "name": "trio" }
+  ],
   "mcp": {
     "claudeFlow": true,
     "profiles": ["server", "laptop"]
