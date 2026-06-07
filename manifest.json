@@ -1,7 +1,8 @@
 {
   "name": "claude-fleet",
-  "description": "Portable, token-lean Claude Code setup for servers + laptops (Linux/macOS/Windows).",
-  "version": "0.1.0",
+  "description": "Portable, consistent Claude Code setup for every machine (Linux/macOS/Windows). Same plugins, skills, councils, and MCP everywhere.",
+  "version": "0.2.0",
+  "githubOwner": "ojesusmp",
   "plugins": [
     {
       "id": "oh-my-claudecode@omc",
@@ -13,7 +14,6 @@
     },
     {
       "id": "frontend-design@claude-plugins-official",
-      "profiles": ["laptop"],
       "marketplace": { "name": "claude-plugins-official", "source": { "source": "github", "repo": "anthropics/claude-plugins-official" } }
     },
     {
@@ -27,7 +27,7 @@
     {
       "id": "caveman@caveman",
       "enabled": false,
-      "_note": "Disabled by default (3.2k always-on cost). Enable for long sessions: set enabled true and re-run, or /plugin.",
+      "_note": "Disabled by default (~3.2k tokens always-on). Enable for long sessions via /plugin or set enabled true.",
       "marketplace": { "name": "caveman", "source": { "source": "github", "repo": "JuliusBrussee/caveman" } }
     }
   ],
@@ -47,22 +47,20 @@
       ]
     }
   ],
-  "githubOwner": "ojesusmp",
-  "_rootSkillRepos_note": "Repos where SKILL.md sits at the repo ROOT (one repo = one skill). Installed to ~/.claude/skills/<name>. 'name' must equal the SKILL.md name: field so /invoke works. Repo label can differ (e.g. SalesCouncil -> sales-council).",
+  "_rootSkillRepos_note": "Repos where SKILL.md sits at the repo ROOT (one repo = one skill). 'name' must equal the SKILL.md name: field so /invoke works; repo label may differ (SalesCouncil -> sales-council).",
   "rootSkillRepos": [
-    { "repo": "TrueCouncilOf12", "name": "TrueCouncilOf12", "profiles": ["laptop"] },
-    { "repo": "DecisionCouncil", "name": "decision-council", "profiles": ["laptop"] },
-    { "repo": "OperationsCouncil", "name": "operations-council", "profiles": ["laptop"] },
-    { "repo": "TechCouncil", "name": "techcouncil", "profiles": ["laptop"] },
-    { "repo": "Customer_Experience_Council", "name": "customer-experience-council", "profiles": ["laptop"] },
-    { "repo": "SalesCouncil", "name": "sales-council", "profiles": ["laptop"] },
-    { "repo": "MarketingCouncil", "name": "marketing-council", "profiles": ["laptop"] },
-    { "repo": "TrueExplica", "name": "explica", "profiles": ["laptop"] },
+    { "repo": "TrueCouncilOf12", "name": "TrueCouncilOf12" },
+    { "repo": "DecisionCouncil", "name": "decision-council" },
+    { "repo": "OperationsCouncil", "name": "operations-council" },
+    { "repo": "TechCouncil", "name": "techcouncil" },
+    { "repo": "Customer_Experience_Council", "name": "customer-experience-council" },
+    { "repo": "SalesCouncil", "name": "sales-council" },
+    { "repo": "MarketingCouncil", "name": "marketing-council" },
+    { "repo": "TrueExplica", "name": "explica" },
     { "repo": "Epistemic-Honesty", "name": "epistemic-honesty" },
     { "repo": "TrueTrio", "name": "trio" }
   ],
   "mcp": {
-    "claudeFlow": true,
-    "profiles": ["server", "laptop"]
+    "claudeFlow": true
   }
 }

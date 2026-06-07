@@ -14,43 +14,45 @@ It does **not** clone a `~/.claude` directory (that breaks across OSes and leaks
 
 ```bash
 # Linux / macOS
-git clone https://github.com/<you>/claude-fleet.git ~/claude-fleet
+git clone https://github.com/ojesusmp/claude-fleet.git ~/claude-fleet
 cd ~/claude-fleet
-./install.sh server      # headless box   (lean)
-./install.sh laptop      # workstation    (full)
-./install.sh laptop --dry-run   # preview, write nothing
+./install.sh              # install everything
+./install.sh --dry-run   # preview, write nothing
 ```
 
 ```powershell
 # Windows
-git clone https://github.com/<you>/claude-fleet.git $HOME\claude-fleet
+git clone https://github.com/ojesusmp/claude-fleet.git $HOME\claude-fleet
 cd $HOME\claude-fleet
-.\install.ps1 -Profile laptop
+.\install.ps1            # or: .\install.ps1 -DryRun
 ```
 
 Then **restart Claude Code**. Re-run `install.sh` anytime to pull updated skills.
 
 > Keep the cloned repo in place — hooks reference scripts inside it by absolute path.
 
-## Profiles
+## What you get (same on every machine)
 
-| | `server` | `laptop` |
-|---|---|---|
-| Core plugins (OMC, superpowers, karpathy, line-check) | ✅ | ✅ |
-| frontend-design | — | ✅ |
-| ECC skills (gateguard, security-scan, context-budget, python/react-patterns, workspace-surface-audit) | ✅ | ✅ |
-| claude-flow MCP | ✅ | ✅ |
-| caveman | off (available) | off (available) |
+No profiles — every box installs the identical set for consistency:
+
+- **Plugins:** oh-my-claudecode, superpowers, frontend-design, karpathy-guidelines, line-check (caveman available but disabled).
+- **ECC skills:** gateguard, security-scan, context-budget, python-patterns, react-patterns, workspace-surface-audit.
+- **Council / decision skills:** TrueCouncilOf12, decision-council, operations-council, techcouncil, customer-experience-council, sales-council, marketing-council, explica, epistemic-honesty, trio.
+- **MCP:** claude-flow (user scope).
+- **Hooks:** karpathy + line-check (cross-platform Node).
 
 ## Customize
 
 Edit `manifest.json`:
 
-- **Add a plugin** → append to `plugins[]` with its `marketplace`. Add `"profiles": ["laptop"]` to scope it.
-- **Add a GitHub skill** → append to `skillRepos[]` (`url`, `skillsPath`, `skills[]`, `sparse: true`). Re-run to install.
-- **Add a one-off skill with no repo** → drop its folder in `skills-vendored/`. It ships with this repo and updates when you update the repo.
-- **Enable caveman by default** → set its `enabled: true` (worth it only on long sessions; costs ~3.2k tokens/session always-on).
-- **Drop claude-flow on a box** → remove `"server"`/`"laptop"` from `mcp.profiles`.
+- **Add a plugin** → append to `plugins[]` with its `marketplace`.
+- **Add a multi-skill GitHub repo** (skills live under `skills/<name>/`) → append to `skillRepos[]` (`url`, `skillsPath`, `skills[]`, `sparse: true`).
+- **Add a single-skill repo** (SKILL.md at repo root) → append to `rootSkillRepos[]` as `{ "repo": "<RepoName>", "name": "<skill-name>" }`. `name` must equal the skill's `name:` field.
+- **Add a one-off skill with no repo** → drop its folder in `skills-vendored/`.
+- **Enable caveman by default** → set its `enabled: true` (worth it only on long sessions; ~3.2k tokens/session always-on).
+- **Drop claude-flow** → set `mcp.claudeFlow` to `false`.
+
+Re-run the installer after any edit to apply.
 
 ## What it writes
 
