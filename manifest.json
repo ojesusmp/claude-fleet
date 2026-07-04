@@ -25,6 +25,10 @@
       "marketplace": { "name": "claude-skills", "source": { "source": "github", "repo": "ojesusmp/claude-skills" } }
     },
     {
+      "id": "model-effort-router@model-effort-router",
+      "marketplace": { "name": "model-effort-router", "source": { "source": "github", "repo": "ojesusmp/model-effort-router" } }
+    },
+    {
       "id": "caveman@caveman",
       "enabled": false,
       "_note": "Disabled by default (~3.2k tokens always-on). Enable for long sessions via /plugin or set enabled true.",
