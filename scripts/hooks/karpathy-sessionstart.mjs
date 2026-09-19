@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Cross-platform SessionStart hook: locate the karpathy-guidelines SKILL.md inside
- * whatever plugin cache exists on this machine and inject it as session context.
- * Replaces the Windows-absolute-path python one-liner. Silent if the plugin is absent.
+ * Cross-platform SessionStart hook: inject the karpathy-guidelines SKILL.md as session
+ * context. Prefers the local navaja-managed copy (~/.claude/skills/karpathy-guidelines/),
+ * falling back to whatever plugin cache exists if that copy is absent. Silent if neither exists.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -10,6 +10,7 @@ import os from 'node:os';
 
 const dir = process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude');
 const base = path.join(dir, 'plugins');
+const localSkill = path.join(dir, 'skills', 'karpathy-guidelines', 'SKILL.md');
 
 function findSkill(root) {
   if (!fs.existsSync(root)) return null;
@@ -28,7 +29,7 @@ function findSkill(root) {
 }
 
 let ctx = '';
-const f = findSkill(base);
+const f = fs.existsSync(localSkill) ? localSkill : findSkill(base);
 if (f) {
   try { ctx = '[KARPATHY GUIDELINES ACTIVE - apply to all coding/review/refactor work]\n\n' + fs.readFileSync(f, 'utf8'); } catch { /* ignore */ }
 }
