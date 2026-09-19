@@ -1,36 +1,26 @@
 #!/usr/bin/env node
 /**
- * Cross-platform SessionStart hook: inject the karpathy-guidelines SKILL.md as session
- * context. Prefers the local navaja-managed copy (~/.claude/skills/karpathy-guidelines/),
- * falling back to whatever plugin cache exists if that copy is absent. Silent if neither exists.
+ * Cross-platform SessionStart hook: inject the karpathy-guidelines SKILL.md as session context.
+ *
+ * Reads ONLY ~/.claude/skills/karpathy-guidelines/SKILL.md, the copy the fleet manages, and is
+ * silent if that file is absent. This used to fall back to scanning ~/.claude/plugins for any
+ * SKILL.md whose path contained "karpathy-guidelines", which meant a plugin marketplace clone
+ * could supply the text injected into every session as authoritative coding guidance. That
+ * marketplace was pinned to a GitHub path that later became a redirect to a different owner, so
+ * the fallback was a live path from a third-party repo straight into session context. Failing
+ * silent is the correct behaviour: a missing banner is visible and harmless, whereas a banner
+ * someone else wrote is neither. navaja-sessionstart.mjs alongside this file is written the same
+ * way and is the model.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 
 const dir = process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude');
-const base = path.join(dir, 'plugins');
 const localSkill = path.join(dir, 'skills', 'karpathy-guidelines', 'SKILL.md');
 
-function findSkill(root) {
-  if (!fs.existsSync(root)) return null;
-  const stack = [root];
-  while (stack.length) {
-    const d = stack.pop();
-    let ents;
-    try { ents = fs.readdirSync(d, { withFileTypes: true }); } catch { continue; }
-    for (const e of ents) {
-      const p = path.join(d, e.name);
-      if (e.isDirectory()) stack.push(p);
-      else if (e.name === 'SKILL.md' && p.includes('karpathy-guidelines')) return p;
-    }
-  }
-  return null;
-}
-
 let ctx = '';
-const f = fs.existsSync(localSkill) ? localSkill : findSkill(base);
-if (f) {
-  try { ctx = '[KARPATHY GUIDELINES ACTIVE - apply to all coding/review/refactor work]\n\n' + fs.readFileSync(f, 'utf8'); } catch { /* ignore */ }
+if (fs.existsSync(localSkill)) {
+  try { ctx = '[KARPATHY GUIDELINES ACTIVE - apply to all coding/review/refactor work]\n\n' + fs.readFileSync(localSkill, 'utf8'); } catch { /* ignore */ }
 }
 process.stdout.write(JSON.stringify({ hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: ctx } }));

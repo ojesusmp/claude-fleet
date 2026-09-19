@@ -10,7 +10,7 @@ It does **not** clone a `~/.claude` directory (that breaks across OSes and leaks
 - **Skills with a GitHub home** — git-cloned at install (sparse) and refreshed on every re-run.
 - **Hooks** — rewritten as self-locating cross-platform Node scripts (no hardcoded paths, no PowerShell).
 - **claude-flow MCP** — registered through the `claude` CLI so each OS gets the right launcher.
-- **Hardened defaults** — deny list, no `enableAllProjectMcpServers`, no secrets, no machine state.
+- **Conservative defaults** — a small deny list, no `enableAllProjectMcpServers`, no permission-mode override, no secrets, no machine state. It does **not** sandbox anything, and it installs third-party code: read [`docs/GUIDE.md` §10](docs/GUIDE.md#10-security--hardening) and `manifest.json` before you run it.
 
 ## Install
 
@@ -37,7 +37,7 @@ Then **restart Claude Code**. Re-run `install.sh` anytime to pull updated skills
 
 No profiles — every box installs the identical set for consistency:
 
-- **Plugins:** oh-my-claudecode, superpowers, frontend-design, karpathy-guidelines, line-check (caveman available but disabled).
+- **Plugins:** oh-my-claudecode, superpowers, frontend-design, model-effort-router, line-check (caveman available but disabled).
 - **ECC skills:** gateguard, security-scan, context-budget, python-patterns, react-patterns, workspace-surface-audit.
 - **Council / decision skills:** TrueCouncilOf12, decision-council, operations-council, techcouncil, customer-experience-council, sales-council, marketing-council, explica, epistemic-honesty, trio.
 - **MCP:** claude-flow (user scope).

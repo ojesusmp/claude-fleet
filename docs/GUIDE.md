@@ -45,7 +45,7 @@ The full reference for installing, understanding, customizing, updating, and tro
 | `oh-my-claudecode` (OMC) | Multi-agent orchestration layer — specialized agents, skills, teams, autopilot/ralph/ultrawork modes. |
 | `superpowers` | Skill framework: brainstorming, TDD, systematic debugging, writing-plans, code review, and more. |
 | `frontend-design` | Generates distinctive, production-grade UI that avoids generic AI aesthetics. |
-| `andrej-karpathy-skills` | Coding discipline: simplicity-first, surgical changes, surface assumptions, verify before claiming done. |
+| `model-effort-router` | Routes each task to the cheapest model and effort tier that can do it in one pass. |
 | `line-check` | Per-line diff audit catching shell continuation traps and the SSH/tar bug class across shells. |
 | `caveman` *(disabled by default)* | Token-compressed communication mode (~75% shorter replies). Enable only for long sessions — it costs ~3.2k tokens always-on. |
 
@@ -250,13 +250,28 @@ The original Windows setup used a `python -c` one-liner with an absolute `C:\…
 
 ## 10. Security & hardening
 
-- **No secrets, no machine state, no absolute personal paths** are stored in the repo (verified). `~/.claude.json` (OAuth, history) is never touched or shipped.
-- **Deny list** blocks `rm -rf /*`, `sudo *`, `chmod 777 *`.
+**Read this before running the installer.** It rewrites your `~/.claude/settings.json`, installs
+plugins from third-party GitHub accounts, and registers an MCP server. That is a lot of trust to
+hand a script. Here is exactly what it does and does not protect.
+
+What it does:
+
+- **No secrets, no machine state, no absolute personal paths** are stored in the repo. `~/.claude.json` (OAuth, history) is never touched or shipped.
+- **Deny list** covers `rm -rf /*`, `sudo *`, `chmod 777 *`. This is three glob patterns, not a sandbox — it stops those literal shapes and nothing else. Do not read it as "dangerous commands are blocked".
 - **`enableAllProjectMcpServers` is intentionally absent**, so a cloned repo cannot auto-approve and run its own MCP servers.
-- The installer **backs up** any existing `settings.json` before overwriting.
-- Commit history uses a GitHub **noreply** email — no personal email is exposed.
+- The installer **backs up** any existing `settings.json` before overwriting, and preserves that file's permissions rather than widening them to the process umask.
+
+What you are accepting:
+
+- **Third-party code runs on your machine.** `manifest.json` pins plugin marketplaces and skill repos owned by accounts other than this one, by name and with no commit pin, and the installer clones and installs whatever is at those paths at install time. Read `manifest.json` before running it. A GitHub repo that is renamed or transferred keeps resolving through a redirect, and whoever holds the old namespace can reclaim it — that is not hypothetical, it already happened to one pin here, which is why it was removed.
+- **`oh-my-claudecode` installs its own hooks**, which run on events beyond session start. They do not appear in your `settings.json`, so reviewing that file does not show you everything that executes.
+- **Permission mode is left alone.** Earlier versions of this repo set `permissions.defaultMode` to `auto` in the shipped base settings, which made Claude decide what was safe to run without asking, on any machine that ran the installer, undisclosed. That has been removed: your Claude Code default applies unless you set it yourself.
 
 To re-audit your live config any time, the bundled `security-scan` skill runs AgentShield against `~/.claude/`.
+
+> Commits are authored with a GitHub noreply address, with the exception of two from 2026-07-03
+> that carry a machine-local hostname. History is not rewritten, because that would break every
+> existing clone for a cosmetic gain.
 
 ---
 

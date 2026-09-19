@@ -56,13 +56,20 @@ function applySettings() {
   ensureDir(CLAUDE_DIR);
   const s = buildSettings();
   if (dryRun) { log('DRY-RUN settings.json:\n' + JSON.stringify(s, null, 2)); return; }
+  // Preserve the existing file's permissions. Without this the rewrite lands at the
+  // process umask (usually 0644), silently widening a hardened 0600 settings.json on
+  // every run. New files are created 0600 rather than inheriting a loose umask.
+  let mode = 0o600;
   if (fs.existsSync(SETTINGS)) {
+    mode = fs.statSync(SETTINGS).mode & 0o777;
     const bak = `${SETTINGS}.bak-fleet-${Date.now()}`;
     fs.copyFileSync(SETTINGS, bak);
+    fs.chmodSync(bak, mode);
     log('backed up existing settings ->', path.basename(bak));
   }
-  fs.writeFileSync(SETTINGS, JSON.stringify(s, null, 2));
-  log('wrote', SETTINGS);
+  fs.writeFileSync(SETTINGS, JSON.stringify(s, null, 2), { mode });
+  fs.chmodSync(SETTINGS, mode); // writeFileSync's mode only applies when creating
+  log('wrote', SETTINGS, '(mode ' + mode.toString(8) + ')');
 }
 
 // ---------------------------------------------------------------- plugins (fetch + cache via claude CLI)
